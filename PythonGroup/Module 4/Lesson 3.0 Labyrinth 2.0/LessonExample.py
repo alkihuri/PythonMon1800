@@ -57,6 +57,15 @@ class Player(pygame.sprite.Sprite):
         if self.rect.left < 0:
             self.rect.left = 0 
 
+class Wall(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale(wall_img, (50, 38))
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.centerx = WIDTH / 2
+        self.rect.bottom = HEIGHT - 10
+
 
 
 def DrawWin():   
@@ -77,10 +86,13 @@ def DrawGame():
 background = pygame.image.load(path.join(img_dir, "labyrinth_field.png")).convert()
 background_rect = background.get_rect()
 player_img = pygame.image.load(path.join(img_dir, "player.png")).convert() 
+wall_img = pygame.image.load(path.join(img_dir, "wall.png")).convert()
 
 all_sprites = pygame.sprite.Group() 
 player = Player()
+wall1 = Wall()
 all_sprites.add(player) 
+all_sprites.add(wall1)
 
 # Цикл игры
 running = True
