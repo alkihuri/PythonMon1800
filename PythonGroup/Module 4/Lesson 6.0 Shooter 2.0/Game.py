@@ -8,6 +8,7 @@ print("Robolab Python Pro Course / Shooter template project =) ")
 import pygame
 import random
 from os import path
+
 #colors and window size set up
 WHITE = (255,255,255)
 BLACK = (0,0,0)
@@ -23,11 +24,17 @@ pygame.display.set_caption("Shooter 2nd lesson")
 clock = pygame.time.Clock() 
 # Game sprites 
 img_dir = path.join(path.dirname(__file__),"img")
-background = pygame.load(path.join(img_dir,"field.png")).convert()
+background = pygame.image.load(path.join(img_dir,"field.png")).convert()
 background_rect = background.get_rect() 
-player_img = pygame.load(path.join(img_dir,"field.png")).convert()
-npc_img = pygame.load(path.join(img_dir,"npc.png")).convert()
-bullet_img = pygame.load(path.join(img_dir,"bullet.png")).convert()
+player_img = pygame.image.load(path.join(img_dir,"ship.png")).convert()
+npc_img = pygame.image.load(path.join(img_dir,"npc.png")).convert()
+bullet_img = pygame.image.load(path.join(img_dir,"bullet.png")).convert()
+
+def DrawGame(): 
+    screen.fill(BLACK)
+    screen.blit(background, background_rect)
+    all_sprites.draw(screen)
+    pygame.display.flip()
 
 #player class
 class Player(pygame.sprite.Sprite):
@@ -38,7 +45,7 @@ class Player(pygame.sprite.Sprite):
         self.image.set_colorkey(WHITE)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH /2
-        self.rect.bottom = HEIGHT - player_size.x
+        self.rect.bottom = HEIGHT - 50
         self.speedx = 0
 
     def update(self):
@@ -51,6 +58,45 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += self.speedx
     #shoot mechanic function
 
+
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        enemy_size = (50,50)
+        self.image = pygame.transform.scale(npc_img,enemy_size)
+        self.image.set_colorkey(WHITE)
+        self.rect = self.image.get_rect()
+        self.rect.centerx = WIDTH / 2
+        self.rect.bottom = HEIGHT - 601
+        self.speedY = 0
+
+    def update(self):
+        self.speedY = 10
+        self.rect.y += self.speedY
+        if self.rect.top > HEIGHT + 10:
+            self.rect.y = HEIGHT - 601
+            self.rect.x = random.randrange(WIDTH - self.rect.width)
+
+
+all_sprites = pygame.sprite.Group() 
+
+player = Player()
+npc = Enemy()
+
+all_sprites.add(player)
+all_sprites.add(npc)
+
+running = True
+while running:
+
+    clock.tick(FPS)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    all_sprites.update()
+    DrawGame()
 
 #mob generation system ~ mob (NPC) class
 
