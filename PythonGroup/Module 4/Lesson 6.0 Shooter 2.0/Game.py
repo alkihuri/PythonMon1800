@@ -26,7 +26,7 @@ clock = pygame.time.Clock()
 img_dir = path.join(path.dirname(__file__),"img")
 background = pygame.image.load(path.join(img_dir,"field.png")).convert()
 background_rect = background.get_rect() 
-player_img = pygame.image.load(path.join(img_dir,"field.png")).convert()
+player_img = pygame.image.load(path.join(img_dir,"ship.png")).convert()
 npc_img = pygame.image.load(path.join(img_dir,"npc.png")).convert()
 bullet_img = pygame.image.load(path.join(img_dir,"bullet.png")).convert()
 
@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
         self.image.set_colorkey(WHITE)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH /2
-        self.rect.bottom = HEIGHT - player_size.x
+        self.rect.bottom = HEIGHT - 50
         self.speedx = 0
 
     def update(self):
@@ -104,11 +104,15 @@ while running:
         #shoot [if event.type == pygame.KEYDOWN] [if event.key == pygame.K_SPACE]
 
     #update of render
-
+    all_sprites.update()
+    screen.fill(BLACK)
+    screen.blit(background, background_rect)
+    all_sprites.draw(screen)
     #screen flip
+    pygame.display.flip()
 
 
- 
+pygame.quit() 
 
 
  
