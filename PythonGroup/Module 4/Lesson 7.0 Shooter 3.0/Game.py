@@ -28,6 +28,7 @@ background_rect = background.get_rect()
 player_img = pygame.image.load(path.join(img_dir,"ship.png")).convert()
 npc_img = pygame.image.load(path.join(img_dir,"npc.png")).convert()
 bullet_img = pygame.image.load(path.join(img_dir,"bullet.png")).convert()
+rock_img = pygame.image.load(path.join(img_dir,"rock.png")).convert()
 
 #player class
 class Player(pygame.sprite.Sprite):
@@ -96,9 +97,28 @@ class Mob(pygame.sprite.Sprite):
             self.speedy = random.randrange(1, 8)
 #mob generation system ~ generation
  
+class Rock(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.transform.scale(rock_img, (50, 50))
+        self.image.set_colorkey(WHITE)
+        self.rect = self.image.get_rect()
+        self.rect.x = random.randrange(WIDTH - self.rect.width)
+        self.rect.y = random.randrange(-300, -30)
+        self.speedy = random.randrange(5, 13)
+
+    def update(self):
+        self.rect.y += self.speedy
+        if self.rect.top > HEIGHT + 10 or self.rect.left < -25 or self.rect.right > WIDTH + 20:
+            self.rect.x = random.randrange(WIDTH - self.rect.width)
+            self.rect.y = random.randrange(-100, -40)
+            self.speedy = random.randrange(8, 16)
+
+
 all_sprites = pygame.sprite.Group()  
 mobs = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
+rocks = pygame.sprite.Group()
 player = Player() 
 all_sprites.add(player)
 
@@ -107,6 +127,10 @@ for i in range(2):
     all_sprites.add(m)
     mobs.add(m)
 
+for i in range(3):
+    r = Rock()
+    all_sprites.add(r)
+    rocks.add(r)
 
 
 #Game lifecycle
@@ -135,6 +159,10 @@ while running:
     if hits:
         running = False
 
+    hits = pygame.sprite.spritecollide(player, rocks, False)
+    if hits:
+        running = False
+
     hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
     for hit in hits:
         player.score += 1
@@ -142,6 +170,15 @@ while running:
         m = Mob()
         all_sprites.add(m)
         mobs.add(m)
+
+    hits = pygame.sprite.groupcollide(rocks, bullets, True, True)
+    for hit in hits:
+        r = Rock()
+        all_sprites.add(r)
+        mobs.add(r)
+
+    
+       
     
     pygame.font.init()
     scoreFont = pygame.font.SysFont("arial", 25)
