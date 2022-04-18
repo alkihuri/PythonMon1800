@@ -34,6 +34,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         player_size = (50,50)
+        self.score = 0
         self.image = pygame.transform.scale(player_img,player_size)
         self.image.set_colorkey(WHITE)
         self.rect = self.image.get_rect()
@@ -51,8 +52,28 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += self.speedx
     #shoot mechanic function
 
+    def shoot(self):
+        bullet = Bullet(self.rect.centerx, self.rect.top)
+        all_sprites.add(bullet)
+        bullets.add(bullet)
+
 
 #bullet class
+
+class Bullet(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = bullet_img
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        self.rect.bottom = y
+        self.rect.centerx = x
+        self.speedy = -10
+
+    def update(self):
+        self.rect.y += self.speedy
+        if self.rect.bottom < 0:
+            self.kill()
 
 #mob generation system ~ mob (NPC) class
 class Mob(pygame.sprite.Sprite):
@@ -86,6 +107,8 @@ for i in range(2):
     all_sprites.add(m)
     mobs.add(m)
 
+
+
 #Game lifecycle
 running = True
 while running:
@@ -95,10 +118,10 @@ while running:
     for event in pygame.event.get(): 
         #event to close window
         if event.type == pygame.QUIT:
-            running = False
+            running = False 
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                print("Hello!")
+                player.shoot()
 
     # sprites update
     all_sprites.update()   
@@ -108,8 +131,32 @@ while running:
     all_sprites.draw(screen) 
     #shoot [if event.type == pygame.KEYDOWN] [if event.key == pygame.K_SPACE]
 
+    hits = pygame.sprite.spritecollide(player, mobs, False)
+    if hits:
+        running = False
+
+    hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
+    for hit in hits:
+        player.score += 1
+        print(player.score)
+        m = Mob()
+        all_sprites.add(m)
+        mobs.add(m)
+    
+    pygame.font.init()
+    scoreFont = pygame.font.SysFont("arial", 25)
+    text = "Score: " + str(player.score)
+    scoreOnScreen = scoreFont.render(text, True, (255, 0, 0))
+    screen.blit(scoreOnScreen, (0, 0))
+
+    if(player.score >= 10):
+        print("Win")
+
     #screen flip
     pygame.display.flip()
+
+
+
 pygame.quit()
 
  
