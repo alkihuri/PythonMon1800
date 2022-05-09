@@ -24,7 +24,32 @@ pygame.init()
 
       # каждый спрайт должен хранить свойство rect - прямоугольник, в который он вписан 
 
-#класс для главного героя     
+#класс для главного героя  
+class Hero(pygame.sprite.Sprite):
+    def __init__(self, filename, x_speed=0, y_speed=0, x=x_start, y=y_start, width=120, height=120):
+       pygame.sprite.Sprite.__init__(self)
+       # the picture is loaded from a file and includes proteins of the required sizes:
+       self.image = pygame.transform.scale(pygame.image.load(filename), (width, height)).convert_alpha()
+                   # use convert_alpha, we need to keep transparency
+       # each sprite must store a rect property - a rectangle. This property is needed to determine the touches of sprites.
+       self.rect = self.image.get_rect()
+       # put the character at the given point (x, y):
+       self.rect.x = x
+       self.rect.y = y
+       # create properties, remember the passed values:
+       self.x_speed = x_speed
+       self.y_speed = y_speed
+       # add the stands_on property - this is the platform on which the character stands
+       self.stands_on = False # if none, then the value is False
+
+    def gravity(self):
+        self.y_speed+=0.25
+
+    def jump(self,y):
+        if self.stands_on:
+            self.y_speed=y
+
+   
  
         # картинка загружается из файла и умещается в прямоугольник нужных размеров:
          
