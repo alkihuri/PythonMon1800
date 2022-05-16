@@ -42,12 +42,41 @@ class Hero(pygame.sprite.Sprite):
        # add the stands_on property - this is the platform on which the character stands
        self.stands_on = False # if none, then the value is False
 
-    def gravity(self):
+    def gravitate(self):
         self.y_speed+=0.25
 
     def jump(self,y):
         if self.stands_on:
             self.y_speed=y
+    def update(self):
+       ''' перемещает персонажа, применяя текущую горизонтальную и вертикальную скорость'''
+      # move horizontally first
+       self.rect.x += self.x_speed
+       # # if we went behind the wall, then we will stand close to the wall
+       platforms_touched = pygame.sprite.spritecollide(self, barriers, False)
+       if self.x_speed > 0: # we go to the right, the right edge of the character is close to the left edge of the wall
+           for p in platforms_touched:
+               self.rect.right = min(self.rect.right, p.rect.left) # if they touched several at once, then the right edge is the minimum possible
+       elif self.x_speed < 0: # go left, put the left edge of the character close to the right edge of the wall
+           for p in platforms_touched:
+               self.rect.left = max(self.rect.left, p.rect.right) # if several walls are touched, then the left edge is the maximum
+       # now moving vertically      
+       self.gravitate()
+       self.rect.y += self.y_speed
+       # if we went behind the wall, then we will stand close to the wall
+       platforms_touched = pygame.sprite.spritecollide(self, barriers, False)
+       if self.y_speed > 0: # go down
+           for p in platforms_touched:
+               self.y_speed = 0
+               # We check which of the platforms below is the highest, align with it, remember it as our support:
+               if p.rect.top < self.rect.bottom:
+                   self.rect.bottom = p.rect.top
+                   self.stands_on = p
+       elif self.y_speed < 0: # go up
+           self.stands_on = False #  so we're not standing on anything!
+           for p in platforms_touched:
+               self.y_speed = 0  # when colliding with a wall, the vertical speed is extinguished
+               self.rect.top = max(self.rect.top, p.rect.bottom) # align the top edge with the bottom edges of the walls that were run over
 
    
  
@@ -76,6 +105,21 @@ class Hero(pygame.sprite.Sprite):
     #конструктор
 
 #класс врага 
+
+class Enemy(pygame.sprite.Sprite): # enemy
+   def __init__(self, x=20, y=0, filename=img_file_enemy, width=100, height=100):
+       pygame.sprite.Sprite.__init__(self)
+
+       self.image = pygame.transform.scale(pygame.image.load(filename), (width, height)).convert_alpha()
+       self.rect = self.image.get_rect()
+       self.rect.x = x
+       self.rect.y = y
+
+   def update(self):
+       ''' перемещает персонажа, применяя текущую горизонтальную и вертикальную скорость'''
+       self.rect.x += randint(-5, 5)
+       self.rect.y += randint(-5, 5)
+
     #конструктор 
 
     # функция апдейт с рандомным перемещением 
