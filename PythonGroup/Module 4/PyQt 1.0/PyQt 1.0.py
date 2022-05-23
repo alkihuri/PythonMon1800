@@ -1,1 +1,36 @@
-# https://docs.google.com/presentation/d/1gqyMy49e3D3A0E9ACEwZGh825fAHHC7Q8yT97-nw4Qw/edit#slide=id.g12dae56b7f6_0_222
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import QApplication, QMainWindow
+import sys
+
+class MyWindow(QMainWindow):
+    def __init__(self):
+        super(MyWindow,self).__init__()
+        self.counter = 0
+        self.setGeometry(200,200,300,300)
+        self.setWindowTitle("Counter")
+        self.CreateLabel("0", 50, 50)
+        self.CreateButton("Click", 0, 0, self.CounterFunc)
+
+    def CreateLabel(self, text, x, y):
+        self.newLabel = QtWidgets.QLabel(self)
+        self.newLabel.setText(text)
+        self.newLabel.move(x, y)
+
+    def CreateButton(self,text,x,y,fun):
+       self.newButton = QtWidgets.QPushButton(self)
+       self.newButton.setText(text)
+       self.newButton.move(x, y)
+       self.newButton.clicked.connect(fun)
+
+    def CounterFunc(self):
+       self.counter = 7
+       self.newLabel.adjustSize()
+       self.newLabel.setText(str(7))
+       print("hello")
+       
+
+
+app = QApplication(sys.argv)
+window = MyWindow()
+window.show()
+sys.exit(app.exec_())
