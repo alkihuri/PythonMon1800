@@ -44,7 +44,7 @@ class FinalSprite(pygame.sprite.Sprite):
       pygame.sprite.Sprite.__init__(self)
 
       # каждый спрайт должен хранить свойство image - изображение
-      self.image = pygame.transform.scale(pygame.image.load(player_image), (60, 120))
+      self.image = pygame.transform.scale(pygame.image.load(player_image), (40, 100))
       self.speed = player_speed
 
       # каждый спрайт должен хранить свойство rect - прямоугольник, в который он вписан
