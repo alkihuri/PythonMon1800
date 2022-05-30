@@ -23,9 +23,9 @@ class MyWindow(QMainWindow):
        self.newButton.clicked.connect(fun)
 
     def CounterFunc(self):
-       self.counter = 7
+       self.counter += 1
        self.newLabel.adjustSize()
-       self.newLabel.setText(str(7))
+       self.newLabel.setText(str(self.counter))
        print("hello")
        
 
