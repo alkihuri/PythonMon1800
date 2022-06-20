@@ -15,11 +15,11 @@ class ReaderView(QMainWindow):
         self.setGeometry(0,0,600,600)
         self.setWindowTitle("Poem reader")
         self.poemSelectField=self.CreateComboBox("Poem: ", 150,25)
-        self.poemSelectField.addItems("WILLIAM SHAKESPEARE", "RUDYARD KIPLING")
+        self.poemSelectField.addItems(["WILLIAM SHAKESPEARE", "RUDYARD KIPLING"])
         self.poemField=self.CreateLabel("POEM NOT LOADED",150,100)
 
     def RequestPoem(self):
-        self.poemString=self.myViewModel.SetPath(self.poemSelectField.currentText())
+        self.poemString = self.myViewModel.SetPath(self.poemSelectField.currentText())   
         self.UpdateUI()
 
     def CreateLabel(self, text,x,y):
@@ -33,7 +33,7 @@ class ReaderView(QMainWindow):
         combo=QComboBox(self)
         combo.move(x+50,y)
         combo.resize(200,32)
-        combo.activated(str).connect(self.RequestPoem)
+        combo.activated[str].connect(self.RequestPoem) 
         return combo
 
     def UpdateUI(self):
@@ -42,7 +42,7 @@ class ReaderView(QMainWindow):
         for x in self.poemString:
             total+=x+"\n"
         self.poemField.resize(500,lineOffset*len(self.poemString))
-        self.posemField.setText(total)
+        self.poemField.setText(total)
 
 
 class ReaderModelView():
@@ -50,7 +50,7 @@ class ReaderModelView():
     def SetPath(self,path):
         currentFilePath = os.path.dirname(__file__)                  
         poemFilePath = currentFilePath + "/" + path + ".txt"
-        ReaderView.self.GetPoemFromModel(poemFilePath)
+        return self.GetPoemFromModel(poemFilePath)
 
     def GetPoemFromModel(self,path):
         return ReaderModel.GetPoem(path)
